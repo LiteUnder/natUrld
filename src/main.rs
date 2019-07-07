@@ -1,11 +1,10 @@
 use amethyst::{
+    assets::Processor,
     core::transform::TransformBundle,
     ecs::prelude::{ReadExpect, Resources, SystemData},
-    assets::Processor,
     prelude::*,
     renderer::{
         pass::DrawFlat2DDesc,
-        SpriteSheet,
         rendy::{
             factory::Factory,
             graph::{
@@ -15,7 +14,7 @@ use amethyst::{
             hal::{format::Format, image},
         },
         types::DefaultBackend,
-        GraphCreator, RenderingSystem,
+        GraphCreator, RenderingSystem, SpriteSheet,
     },
     window::{ScreenDimensions, Window, WindowBundle},
 };

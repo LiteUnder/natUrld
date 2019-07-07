@@ -3,7 +3,10 @@ use amethyst::{
     core::transform::Transform,
     ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture /* pass::DrawFlat2D <- may be used later for drawing sprites without entities*/},
+    renderer::{
+        Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat,
+        Texture, /* pass::DrawFlat2D <- may be used later for drawing sprites without entities*/
+    },
 };
 
 #[derive(Copy, Clone, PartialEq)]
@@ -73,7 +76,6 @@ fn get_spritesheet(world: &mut World, name: &str) -> Handle<SpriteSheet> {
             (),
             &texture_storage,
         )
-        
     };
 
     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
@@ -103,11 +105,12 @@ fn draw_stone(world: &mut World, sprite: SpriteRender, grid: TileGrid) {
                     transform.set_translation_x(iter_x as f32 * TILE_SIZE + 16.0);
                     transform.set_translation_y(iter_y as f32 * TILE_SIZE + 16.0);
 
-                    world.create_entity()
+                    world
+                        .create_entity()
                         .with(transform.clone())
                         .with(sprite.clone())
                         .build();
-                },
+                }
                 _ => (),
             };
             iter_y += 1;
@@ -136,13 +139,13 @@ fn init_player(world: &mut World, sprite: SpriteRender) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(VISIBLE_WIDTH * 0.5, VISIBLE_HEIGHT * 0.5, 0.0);
 
-    world.create_entity()
+    world
+        .create_entity()
         .with(Player)
         .with(transform)
         .with(sprite)
         .build();
 }
-
 
 fn init_camera(world: &mut World) {
     let mut transform = Transform::default();
@@ -153,5 +156,4 @@ fn init_camera(world: &mut World) {
         .with(Camera::standard_2d(VISIBLE_WIDTH, VISIBLE_HEIGHT))
         .with(transform)
         .build();
-
 }
