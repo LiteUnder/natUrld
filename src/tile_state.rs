@@ -9,11 +9,11 @@ use amethyst::{
     },
 };
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub enum TileType {
     Air,
-    Stone,
-    // Dirt, TODO: add more tiles
+    Stone(SpriteRender),
+    Dirt(SpriteRender),
 }
 
 const VISIBLE_WIDTH: f32 = 1280.0;
@@ -21,16 +21,19 @@ const VISIBLE_HEIGHT: f32 = 720.0;
 
 const TILE_SIZE: f32 = 32.0;
 
+const PLAYER_WIDTH: f32 = 64.0;
+const PLAYER_HEIGHT: f32 = 96.0;
+
 pub struct TileState;
 
 pub struct TileGrid {
-    grid: [[TileType; 45]; 80],
+    grid: Vec<Vec<TileType>>,
 }
 
 impl TileGrid {
     pub fn new() -> TileGrid {
         TileGrid {
-            grid: [[TileType::Air; 45]; 80],
+            grid: vec![vec![TileType::Air; 45]; 80]
         }
     }
 }
@@ -46,12 +49,19 @@ impl SimpleState for TileState {
         let world = data.world;
 
         let mut tile_grid = TileGrid::new();
-        fill_tiles(&mut tile_grid, 0, 0, 40, 11, TileType::Stone);
 
         let stone_render = SpriteRender {
             sprite_sheet: get_spritesheet(world, "stone"),
             sprite_number: 0,
         };
+
+        let dirt_render = SpriteRender {
+            sprite_sheet: get_spritesheet(world, "dirt"),
+            sprite_number: 0,
+        };
+
+        fill_tiles(&mut tile_grid, 0, 0, 40, 11, &TileType::Stone(stone_render));
+        fill_tiles(&mut tile_grid, 0, 9, 40, 11, &TileType::Dirt(dirt_render));
 
         let player_render = SpriteRender {
             sprite_sheet: get_spritesheet(world, "player"),
@@ -60,9 +70,10 @@ impl SimpleState for TileState {
 
         world.register::<Player>();
 
-        init_camera(world);
-        draw_stone(world, stone_render, tile_grid);
         init_player(world, player_render);
+        init_camera(world);
+        draw_tiles(world, &tile_grid);
+
     }
 }
 
@@ -87,7 +98,7 @@ fn get_spritesheet(world: &mut World, name: &str) -> Handle<SpriteSheet> {
     )
 }
 
-fn draw_stone(world: &mut World, sprite: SpriteRender, grid: TileGrid) {
+fn draw_tiles(world: &mut World, grid: &TileGrid) {
     let mut transform = Transform::default();
     // transform.set_translation_xyz(TILE_SIZE * 0.5, TILE_SIZE * 0.5, 0.0);
 
@@ -101,17 +112,19 @@ fn draw_stone(world: &mut World, sprite: SpriteRender, grid: TileGrid) {
     for column in grid.grid.iter() {
         for tile in column.iter() {
             match tile {
-                TileType::Stone => {
-                    transform.set_translation_x(iter_x as f32 * TILE_SIZE + 16.0);
-                    transform.set_translation_y(iter_y as f32 * TILE_SIZE + 16.0);
+                TileType::Air => {
+
+                }
+                TileType::Stone(sprite) | TileType::Dirt(sprite) => {
+                    transform.set_translation_x(iter_x as f32 * TILE_SIZE);
+                    transform.set_translation_y(iter_y as f32 * TILE_SIZE);
 
                     world
                         .create_entity()
                         .with(transform.clone())
                         .with(sprite.clone())
                         .build();
-                }
-                _ => (),
+                },
             };
             iter_y += 1;
         }
@@ -126,18 +139,18 @@ fn fill_tiles(
     y1: usize,
     x2: usize,
     y2: usize,
-    tile: TileType,
+    tile: &TileType,
 ) {
     for x in x1..x2 {
         for y in y1..y2 {
-            tile_grid.grid[x][y] = tile;
+            tile_grid.grid[x][y] = tile.clone();
         }
     }
 }
 
 fn init_player(world: &mut World, sprite: SpriteRender) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(VISIBLE_WIDTH * 0.5, VISIBLE_HEIGHT * 0.5, 0.0);
+    transform.set_translation_xyz(TILE_SIZE * 19.0, TILE_SIZE * 13.0, 0.0);
 
     world
         .create_entity()
@@ -149,7 +162,8 @@ fn init_player(world: &mut World, sprite: SpriteRender) {
 
 fn init_camera(world: &mut World) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(VISIBLE_WIDTH * 0.5, VISIBLE_HEIGHT * 0.5, 1.0);
+    // hard coded offset for now, since centre of screen is actually 22.5 which we don't want
+    transform.set_translation_xyz((TILE_SIZE * 19.0) + (PLAYER_WIDTH * 0.5), (TILE_SIZE * 13.0) - (PLAYER_WIDTH * 0.5), 1.0);
 
     world
         .create_entity()

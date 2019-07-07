@@ -89,7 +89,7 @@ impl GraphCreator<DefaultBackend> for RenderingGraph {
             window_kind,
             1,
             surface_format,
-            Some(ClearValue::Color([0.0, 0.0, 0.0, 1.0].into())),
+            Some(ClearValue::Color([0.53, 0.81, 0.92, 1.0].into())),
         );
 
         let depth = graph_builder.create_image(
