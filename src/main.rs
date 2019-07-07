@@ -19,11 +19,7 @@ use amethyst::{
     window::{ScreenDimensions, Window, WindowBundle},
 };
 
-struct MyState;
-
-impl SimpleState for MyState {
-    fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>) {}
-}
+mod tile_world;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -40,7 +36,7 @@ fn main() -> amethyst::Result<()> {
             RenderingGraph::default(),
         ));
 
-    let mut game = Application::new(resources_dir, MyState, game_data)?;
+    let mut game = Application::new(resources_dir, tile_world::TileWorld {}, game_data)?;
     game.run();
 
     Ok(())
