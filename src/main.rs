@@ -1,9 +1,11 @@
 use amethyst::{
     core::transform::TransformBundle,
     ecs::prelude::{ReadExpect, Resources, SystemData},
+    assets::Processor,
     prelude::*,
     renderer::{
-        pass::DrawShadedDesc,
+        pass::DrawFlat2DDesc,
+        SpriteSheet,
         rendy::{
             factory::Factory,
             graph::{
@@ -26,11 +28,16 @@ fn main() -> amethyst::Result<()> {
 
     let app_root = application_root_dir()?;
 
-    let resources_dir = app_root.join("resources");
+    let resources_dir = app_root.join("res");
     let display_config_path = resources_dir.join("display_config.ron");
 
     let game_data = GameDataBuilder::default()
         .with_bundle(WindowBundle::from_config_path(display_config_path))?
+        .with(
+            Processor::<SpriteSheet>::new(),
+            "sprite_sheet_processor",
+            &[],
+        )
         .with_bundle(TransformBundle::new())?
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             RenderingGraph::default(),
@@ -45,7 +52,6 @@ fn main() -> amethyst::Result<()> {
 #[derive(Default)]
 struct RenderingGraph {
     dimensions: Option<ScreenDimensions>,
-    surface_format: Option<Format>,
     dirty: bool,
 }
 
@@ -77,9 +83,7 @@ impl GraphCreator<DefaultBackend> for RenderingGraph {
         let window = <ReadExpect<'_, Window>>::fetch(res);
         let surface = factory.create_surface(&window);
         // cache surface format to speed things up
-        let surface_format = *self
-            .surface_format
-            .get_or_insert_with(|| factory.get_surface_format(&surface));
+        let surface_format = factory.get_surface_format(&surface);
         let dimensions = self.dimensions.as_ref().unwrap();
         let window_kind =
             image::Kind::D2(dimensions.width() as u32, dimensions.height() as u32, 1, 1);
@@ -89,7 +93,7 @@ impl GraphCreator<DefaultBackend> for RenderingGraph {
             window_kind,
             1,
             surface_format,
-            Some(ClearValue::Color([0.34, 0.36, 0.52, 1.0].into())),
+            Some(ClearValue::Color([0.0, 0.0, 0.0, 1.0].into())),
         );
 
         let depth = graph_builder.create_image(
@@ -101,7 +105,7 @@ impl GraphCreator<DefaultBackend> for RenderingGraph {
 
         let opaque = graph_builder.add_node(
             SubpassBuilder::new()
-                .with_group(DrawShadedDesc::new().builder())
+                .with_group(DrawFlat2DDesc::new().builder())
                 .with_color(color)
                 .with_depth_stencil(depth)
                 .into_pass(),
