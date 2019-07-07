@@ -17,7 +17,6 @@ use amethyst::{
         types::DefaultBackend,
         GraphCreator, RenderingSystem,
     },
-    utils::application_root_dir,
     window::{ScreenDimensions, Window, WindowBundle},
 };
 
@@ -26,10 +25,8 @@ mod tile_state;
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
-    let app_root = application_root_dir()?;
-
-    let resources_dir = app_root.join("res");
-    let display_config_path = resources_dir.join("display_config.ron");
+    let resources_dir = "res";
+    let display_config_path = "res/display_config.ron";
 
     let game_data = GameDataBuilder::default()
         .with_bundle(WindowBundle::from_config_path(display_config_path))?

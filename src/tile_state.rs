@@ -3,14 +3,14 @@ use amethyst::{
     core::transform::Transform,
     ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
-    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture, pass::DrawFlat2D},
+    renderer::{Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat, Texture /* pass::DrawFlat2D <- may be used later for drawing sprites without entities*/},
 };
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum TileType {
     Air,
     Stone,
-    Dirt,
+    // Dirt, TODO: add more tiles
 }
 
 const VISIBLE_WIDTH: f32 = 1280.0;
@@ -46,21 +46,29 @@ impl SimpleState for TileState {
         fill_tiles(&mut tile_grid, 0, 0, 40, 11, TileType::Stone);
 
         let stone_render = SpriteRender {
-            sprite_sheet: get_spritesheet(world),
+            sprite_sheet: get_spritesheet(world, "stone"),
             sprite_number: 0,
         };
 
+        let player_render = SpriteRender {
+            sprite_sheet: get_spritesheet(world, "player"),
+            sprite_number: 0,
+        };
+
+        world.register::<Player>();
+
         init_camera(world);
         draw_stone(world, stone_render, tile_grid);
+        init_player(world, player_render);
     }
 }
 
-fn get_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
+fn get_spritesheet(world: &mut World, name: &str) -> Handle<SpriteSheet> {
     let loader = world.read_resource::<Loader>();
     let texture_handle = {
         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
         loader.load(
-            "texture/stone.png",
+            format!("texture/{}.png", name),
             ImageFormat::default(),
             (),
             &texture_storage,
@@ -70,7 +78,7 @@ fn get_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
 
     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
     loader.load(
-        "texture/stone.ron",
+        format!("texture/{}.ron", name),
         SpriteSheetFormat(texture_handle),
         (),
         &sprite_sheet_store,
@@ -122,6 +130,17 @@ fn fill_tiles(
             tile_grid.grid[x][y] = tile;
         }
     }
+}
+
+fn init_player(world: &mut World, sprite: SpriteRender) {
+    let mut transform = Transform::default();
+    transform.set_translation_xyz(VISIBLE_WIDTH * 0.5, VISIBLE_HEIGHT * 0.5, 0.0);
+
+    world.create_entity()
+        .with(Player)
+        .with(transform)
+        .with(sprite)
+        .build();
 }
 
 
