@@ -21,7 +21,7 @@ use amethyst::{
     window::{ScreenDimensions, Window, WindowBundle},
 };
 
-mod tile_world;
+mod tile_state;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -43,7 +43,7 @@ fn main() -> amethyst::Result<()> {
             RenderingGraph::default(),
         ));
 
-    let mut game = Application::new(resources_dir, tile_world::TileWorld {}, game_data)?;
+    let mut game = Application::new(resources_dir, tile_state::TileState {}, game_data)?;
     game.run();
 
     Ok(())
