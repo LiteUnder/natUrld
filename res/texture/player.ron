@@ -1,13 +1,13 @@
 (
-    texture_width: 64,
-    texture_height: 96,
+    texture_width: 32,
+    texture_height: 64,
     sprites: [
         (
             x: 0,
             y: 0,
-            offsets: Some((-32, 48)),
-            width: 64,
-            height: 96,
+            offsets: Some((-16, -32)),
+            width: 32,
+            height: 64,
 
         ),
     ],
