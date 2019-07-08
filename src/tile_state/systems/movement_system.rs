@@ -24,7 +24,7 @@ impl<'s> System<'s> for MovementSystem {
             }
 
             let jump = input.action_is_down("jump");
-            
+
             if jump.unwrap_or(false) {
                 println!("{}", player.falling);
                 println!("{}", player.velocity[1]);
@@ -33,6 +33,5 @@ impl<'s> System<'s> for MovementSystem {
                 }
             }
         }
-        // TODO: add jumping and basic physics
     }
 }
