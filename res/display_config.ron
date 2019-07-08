@@ -1,4 +1,4 @@
 (
-  title: "Natuarld",
-  dimensions: Some((1280, 720)),
+    title: "Natuarld",
+    dimensions: Some((1280, 720)),
 )

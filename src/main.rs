@@ -17,12 +17,18 @@ use amethyst::{
         GraphCreator, RenderingSystem, SpriteSheet,
     },
     window::{ScreenDimensions, Window, WindowBundle},
+    input::{InputBundle, StringBindings},
 };
 
 mod tile_state;
 
+use tile_state::MovementSystem;
+
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
+
+    let input_bundle = InputBundle::<StringBindings>::new()
+        .with_bindings_from_file("res/bindings_config.ron")?;
 
     let resources_dir = "res";
     let display_config_path = "res/display_config.ron";
@@ -35,11 +41,13 @@ fn main() -> amethyst::Result<()> {
             &[],
         )
         .with_bundle(TransformBundle::new())?
+        .with_bundle(input_bundle)?
+        .with(MovementSystem, "movement_system", &["input_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             RenderingGraph::default(),
         ));
 
-    let mut game = Application::new(resources_dir, tile_state::TileState {}, game_data)?;
+    let mut game = Application::new(resources_dir, tile_state::TileState, game_data)?;
     game.run();
 
     Ok(())

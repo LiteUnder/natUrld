@@ -23,6 +23,7 @@ impl Player {
             .with(Player)
             .with(transform)
             .with(sprite)
+            .named("player")
             .build();
     }
 }

@@ -10,8 +10,11 @@ use amethyst::{
 };
 
 mod components;
+mod systems;
 
 use components::Player;
+
+pub use systems::MovementSystem;
 
 #[derive(Clone, PartialEq)]
 pub enum TileType {
@@ -147,7 +150,7 @@ fn init_camera(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(
         (TILE_SIZE * 20.0) + (PLAYER_WIDTH * 0.5),
-        (TILE_SIZE * 11.0) + (PLAYER_WIDTH * 0.5),
+        (TILE_SIZE * 11.0) + (PLAYER_HEIGHT * 0.5),
         1.0,
     );
 
@@ -155,5 +158,6 @@ fn init_camera(world: &mut World) {
         .create_entity()
         .with(Camera::standard_2d(VISIBLE_WIDTH, VISIBLE_HEIGHT))
         .with(transform)
+        .named("main_camera")
         .build();
 }
