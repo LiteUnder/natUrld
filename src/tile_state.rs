@@ -165,6 +165,5 @@ fn init_camera(world: &mut World) {
         .create_entity()
         .with(Camera::standard_2d(VISIBLE_WIDTH, VISIBLE_HEIGHT))
         .with(transform)
-        .named("main_camera")
         .build();
 }

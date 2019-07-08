@@ -35,7 +35,6 @@ impl Player {
             .with(Player::new())
             .with(transform)
             .with(sprite)
-            .named("player")
             .build();
     }
 }
