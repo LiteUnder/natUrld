@@ -9,11 +9,9 @@ use amethyst::{
 };
 
 mod components;
-mod systems;
+pub mod systems;
 
 use components::Player;
-
-pub use systems::MovementSystem;
 
 #[derive(Clone, PartialEq)]
 pub enum TileType {

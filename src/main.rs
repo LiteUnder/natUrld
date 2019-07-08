@@ -22,7 +22,7 @@ use amethyst::{
 
 mod tile_state;
 
-use tile_state::MovementSystem;
+use tile_state::systems::*;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -43,6 +43,7 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with(MovementSystem, "movement_system", &["input_system"])
+        .with(PhysicsSystem, "physics_system", &[])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             RenderingGraph::default(),
         ));
