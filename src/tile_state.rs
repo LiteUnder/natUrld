@@ -49,8 +49,10 @@ impl SimpleState for TileState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
+        // TODO: move tile grid into a resource
         let mut tile_grid = TileGrid::new();
 
+        // TODO: use a single spritesheet for most tile sprites (or same ron file)
         let stone_render = SpriteRender {
             sprite_sheet: get_spritesheet(world, "stone"),
             sprite_number: 0,
@@ -115,6 +117,7 @@ fn draw_tiles(world: &mut World, grid: &TileGrid) {
     let mut iter_x = 0;
     let mut iter_y = 0;
 
+    // TODO: find a way to avoid using entities for tiles
     for column in grid.grid.iter() {
         for tile in column.iter() {
             match tile {

@@ -27,5 +27,6 @@ impl<'s> System<'s> for MovementSystem {
                 transform.prepend_translation_x(scaled_mv);
             }
         }
+        // TODO: add jumping and basic physics
     }
 }
