@@ -1,10 +1,8 @@
 use amethyst::{
-    ecs::{Read, ReadStorage, System, SystemData, Write, WriteStorage, Join},
-    prelude::*,
+    ecs::{Read, ReadStorage, System, WriteStorage, Join},
     core::transform::Transform,
     core::Named,
     input::{InputHandler, StringBindings},
-    renderer::Camera,
     core::timing::Time,
 };
 
@@ -21,7 +19,7 @@ impl<'s> System<'s> for MovementSystem {
     );
 
     fn run(&mut self, (names, mut transforms, input, time): Self::SystemData) {
-        for (_, transform) in (&names, &mut transforms).join() {
+        for (_, transform) in (&names, &mut transforms).join() { // currently works because the camera and player are the only two entities with names
             let movement = input.axis_value("horizontal");
 
             if let Some(mv_x) = movement {

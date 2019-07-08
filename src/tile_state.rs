@@ -1,7 +1,6 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
     core::transform::Transform,
-    ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
     renderer::{
         Camera, ImageFormat, SpriteRender, SpriteSheet, SpriteSheetFormat,
@@ -21,6 +20,7 @@ pub enum TileType {
     Air,
     Stone(SpriteRender),
     Dirt(SpriteRender),
+    Grass(SpriteRender),
 }
 
 const VISIBLE_WIDTH: f32 = 1280.0;
@@ -61,8 +61,14 @@ impl SimpleState for TileState {
             sprite_number: 0,
         };
 
+        let grass_render = SpriteRender {
+            sprite_sheet: get_spritesheet(world, "grass"),
+            sprite_number: 0,
+        };
+
         fill_tiles(&mut tile_grid, 0, 0, 80, 11, &TileType::Stone(stone_render));
-        fill_tiles(&mut tile_grid, 0, 9, 80, 11, &TileType::Dirt(dirt_render));
+        fill_tiles(&mut tile_grid, 0, 8, 80, 11, &TileType::Dirt(dirt_render));
+        fill_tiles(&mut tile_grid, 0, 10, 80, 11, &TileType::Grass(grass_render));
 
         let player_render = SpriteRender {
             sprite_sheet: get_spritesheet(world, "player"),
@@ -113,7 +119,7 @@ fn draw_tiles(world: &mut World, grid: &TileGrid) {
         for tile in column.iter() {
             match tile {
                 TileType::Air => {}
-                TileType::Stone(sprite) | TileType::Dirt(sprite) => {
+                TileType::Stone(sprite) | TileType::Dirt(sprite) | TileType::Grass(sprite) => {
                     transform.set_translation_x(iter_x as f32 * TILE_SIZE);
                     transform.set_translation_y(iter_y as f32 * TILE_SIZE);
 
